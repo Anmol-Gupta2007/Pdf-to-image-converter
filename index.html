@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF to Image Converter</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        // Set the worker path for PDF.js to function correctly
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✨ PDF to Image Converter</h1>
+            <p>Upload multiple PDFs and download each page as a high-quality image.</p>
+        </header>
+        
+        <div class="upload-area" id="upload-area">
+            <input type="file" id="file-input" accept="application/pdf" multiple hidden>
+            <button class="upload-btn" onclick="document.getElementById('file-input').click()">Choose PDFs</button>
+            <p>or drag and drop your files here</p>
+        </div>
+
+        <div id="output-container" class="output-grid"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
