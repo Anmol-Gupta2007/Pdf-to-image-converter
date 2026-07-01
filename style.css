@@ -121,3 +121,30 @@ header p {
 .download-btn:hover {
     box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4);
 }
+
+/* Add this to the bottom of your existing style.css */
+
+#actions-container {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.download-all-btn {
+    background: linear-gradient(to right, #f6d365 0%, #fda085 100%);
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: inline-block;
+}
+
+.download-all-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(253, 160, 133, 0.4);
+}
