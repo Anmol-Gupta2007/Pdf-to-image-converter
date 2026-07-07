@@ -72,6 +72,55 @@ header p {
     box-shadow: 0 5px 15px rgba(118, 75, 162, 0.4);
 }
 
+/* Actions Section */
+#actions-container {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.actions-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.download-all-btn {
+    background: linear-gradient(to right, #f6d365 0%, #fda085 100%);
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.download-all-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(253, 160, 133, 0.4);
+}
+
+.download-zip-btn {
+    background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.download-zip-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 242, 254, 0.4);
+}
+
 /* Grid for Output Images */
 .output-grid {
     display: grid;
@@ -89,6 +138,8 @@ header p {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
 }
 
 .image-card img {
@@ -97,6 +148,7 @@ header p {
     border-radius: 8px;
     margin-bottom: 1rem;
     border: 1px solid #eee;
+    transition: filter 0.3s;
 }
 
 .file-name {
@@ -107,44 +159,42 @@ header p {
     font-weight: 500;
 }
 
-.download-btn {
-    display: inline-block;
-    background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+/* --- New "Remove Page" Button Styles --- */
+.remove-btn {
+    background: #ff4757;
     color: white;
-    text-decoration: none;
+    border: none;
     padding: 10px 20px;
     border-radius: 8px;
     font-weight: bold;
-    transition: box-shadow 0.3s;
-}
-
-.download-btn:hover {
-    box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4);
-}
-
-/* Add this to the bottom of your existing style.css */
-
-#actions-container {
-    text-align: center;
-    margin-bottom: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid #eee;
-}
-
-.download-all-btn {
-    background: linear-gradient(to right, #f6d365 0%, #fda085 100%);
-    color: white;
-    border: none;
-    padding: 14px 30px;
-    border-radius: 8px;
-    font-size: 1.2rem;
-    font-weight: bold;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    display: inline-block;
+    transition: all 0.3s;
 }
 
-.download-all-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(253, 160, 133, 0.4);
+.remove-btn:hover {
+    background: #ff6b81;
+}
+
+/* --- Removed State Styling --- */
+.image-card.removed {
+    background: #fff0f0;
+    border-color: #ff4757;
+    opacity: 0.7;
+}
+
+.image-card.removed img {
+    filter: grayscale(100%) opacity(70%);
+}
+
+.image-card.removed .file-name {
+    text-decoration: line-through;
+    color: #ff4757;
+}
+
+.image-card.removed .remove-btn {
+    background: #555;
+}
+
+.image-card.removed .remove-btn:hover {
+    background: #777;
 }
