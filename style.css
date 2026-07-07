@@ -159,9 +159,10 @@ header p {
     font-weight: 500;
 }
 
-/* --- New "Remove Page" Button Styles --- */
+/* --- New "Remove Page" Button Styles (Matched to your image) --- */
 .remove-btn {
-    background: #ff4757;
+    /* Default state: Blue Gradient */
+    background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
     color: white;
     border: none;
     padding: 10px 20px;
@@ -169,10 +170,12 @@ header p {
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
 }
 
 .remove-btn:hover {
-    background: #ff6b81;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 242, 254, 0.5);
 }
 
 /* --- Removed State Styling --- */
@@ -191,10 +194,13 @@ header p {
     color: #ff4757;
 }
 
+/* Removed state: Red Solid Color */
 .image-card.removed .remove-btn {
-    background: #555;
+    background: #ff4d6d;
+    box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
 }
 
 .image-card.removed .remove-btn:hover {
-    background: #777;
+    background: #ff3355;
+    box-shadow: 0 6px 20px rgba(255, 77, 109, 0.5);
 }
