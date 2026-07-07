@@ -3,9 +3,11 @@ const outputContainer = document.getElementById('output-container');
 const uploadArea = document.getElementById('upload-area');
 const actionsContainer = document.getElementById('actions-container');
 const downloadAllBtn = document.getElementById('download-all-btn');
+const downloadZipBtn = document.getElementById('download-zip-btn');
 
-// Array to keep track of all generated images for the "Download All" feature
+// Array to keep track of all generated images and their "removed" state
 let generatedImages = [];
+let globalImageIdCounter = 0; // Unique ID to track elements
 
 // --- Drag and Drop Logic ---
 uploadArea.addEventListener('dragover', (e) => {
@@ -43,11 +45,12 @@ async function handleFiles(files) {
             try {
                 const pdf = await pdfjsLib.getDocument(typedarray).promise;
                 
+                // Process sequentially from Page 1 up to the last page
                 for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
                     await renderPageToImage(pdf, pageNum, file.name);
                 }
 
-                // Show the "Download All" button once processing is done
+                // Show the actions bar once processing is done
                 if (generatedImages.length > 0) {
                     actionsContainer.style.display = 'block';
                 }
@@ -82,18 +85,26 @@ async function renderPageToImage(pdf, pageNum, originalName) {
     const imgUrl = canvas.toDataURL('image/png');
     const baseName = originalName.replace('.pdf', '');
     const newFileName = `${baseName}_Page_${pageNum}.png`;
+    
+    const currentId = globalImageIdCounter++;
 
-    // Store in our array for the "Download All" feature
-    generatedImages.push({ url: imgUrl, filename: newFileName });
+    // Store in our array, defaulting "removed" to false
+    generatedImages.push({ 
+        id: currentId, 
+        url: imgUrl, 
+        filename: newFileName, 
+        removed: false 
+    });
 
     // Build the UI card
-    createImageCard(imgUrl, newFileName);
+    createImageCard(imgUrl, newFileName, currentId);
 }
 
-// --- Build UI for Individual Download ---
-function createImageCard(imgUrl, fileName) {
+// --- Build UI for Individual Pages ---
+function createImageCard(imgUrl, fileName, id) {
     const card = document.createElement('div');
     card.className = 'image-card';
+    card.id = `card-${id}`;
 
     const img = document.createElement('img');
     img.src = imgUrl;
@@ -103,37 +114,106 @@ function createImageCard(imgUrl, fileName) {
     nameObj.className = 'file-name';
     nameObj.textContent = fileName;
 
-    const downloadBtn = document.createElement('a');
-    downloadBtn.href = imgUrl;
-    downloadBtn.download = fileName;
-    downloadBtn.className = 'download-btn';
-    downloadBtn.textContent = 'Download PNG';
+    // Create Remove Button
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'remove-btn';
+    removeBtn.textContent = '❌ Remove this page';
+    
+    // Toggle remove logic on click
+    removeBtn.onclick = () => {
+        const imageObj = generatedImages.find(img => img.id === id);
+        if (!imageObj) return;
+
+        imageObj.removed = !imageObj.removed; // Toggle state
+
+        if (imageObj.removed) {
+            card.classList.add('removed');
+            removeBtn.textContent = '✔️ Removed';
+        } else {
+            card.classList.remove('removed');
+            removeBtn.textContent = '❌ Remove this page';
+        }
+    };
 
     card.appendChild(img);
     card.appendChild(nameObj);
-    card.appendChild(downloadBtn);
+    card.appendChild(removeBtn);
 
-    outputContainer.prepend(card);
+    // CHANGED: Using appendChild instead of prepend so pages render in standard 1, 2, 3 order.
+    outputContainer.appendChild(card);
 }
 
-// --- Download All Logic ---
+// --- Download All Logic (Skips removed pages) ---
 downloadAllBtn.addEventListener('click', async () => {
-    // Loop through the array and trigger downloads
-    for (let i = 0; i < generatedImages.length; i++) {
-        const imageFile = generatedImages[i];
+    const activeImages = generatedImages.filter(img => !img.removed);
+
+    if (activeImages.length === 0) {
+        alert("No pages available to download. You removed them all!");
+        return;
+    }
+
+    for (let i = 0; i < activeImages.length; i++) {
+        const imageFile = activeImages[i];
         
-        // Create a temporary link element
         const a = document.createElement('a');
         a.href = imageFile.url;
         a.download = imageFile.filename;
         
-        // Append, click, and remove to trigger download
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
 
-        // Crucial: Wait 300 milliseconds between downloads
-        // This prevents the browser from thinking it's spam and blocking the files
+        // Crucial: Wait 300 milliseconds between downloads to prevent browser blocking
         await new Promise(resolve => setTimeout(resolve, 300));
+    }
+});
+
+// --- Download as ZIP Logic ---
+downloadZipBtn.addEventListener('click', async () => {
+    const activeImages = generatedImages.filter(img => !img.removed);
+
+    if (activeImages.length === 0) {
+        alert("No pages available to zip. You removed them all!");
+        return;
+    }
+
+    // Change button text briefly to show loading
+    const originalText = downloadZipBtn.innerHTML;
+    downloadZipBtn.innerHTML = "⏳ Zipping...";
+    downloadZipBtn.disabled = true;
+
+    try {
+        const zip = new JSZip();
+
+        // Loop through active images and add them to the zip
+        activeImages.forEach(imgData => {
+            // Data URL format: "data:image/png;base64,iVBORw0KGgo..."
+            // We need to split at the comma and take the second part to get raw base64.
+            const base64Data = imgData.url.split(',')[1];
+            zip.file(imgData.filename, base64Data, { base64: true });
+        });
+
+        // Generate the zip file
+        const content = await zip.generateAsync({ type: "blob" });
+        
+        // Trigger download of the ZIP
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(content);
+        a.download = "Converted_Pages.zip";
+        
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        
+        // Clean up the URL object
+        URL.revokeObjectURL(a.href);
+
+    } catch (error) {
+        console.error("Error creating ZIP:", error);
+        alert("An error occurred while creating the ZIP file.");
+    } finally {
+        // Restore button state
+        downloadZipBtn.innerHTML = originalText;
+        downloadZipBtn.disabled = false;
     }
 });
