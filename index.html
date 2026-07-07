@@ -10,12 +10,14 @@
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>✨ PDF to Image Converter</h1>
-            <p>Upload multiple PDFs and download pages individually or all at once.</p>
+            <p>Upload a PDF, remove unwanted pages, and download as images or a ZIP file.</p>
         </header>
         
         <div class="upload-area" id="upload-area">
@@ -25,7 +27,10 @@
         </div>
 
         <div id="actions-container" style="display: none;">
-            <button id="download-all-btn" class="download-all-btn">⬇️ Download All Images</button>
+            <div class="actions-wrapper">
+                <button id="download-all-btn" class="download-all-btn">⬇️ Download All Images</button>
+                <button id="download-zip-btn" class="download-zip-btn">🗂️ Download as ZIP</button>
+            </div>
         </div>
 
         <div id="output-container" class="output-grid"></div>
